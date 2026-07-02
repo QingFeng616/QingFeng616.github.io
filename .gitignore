@@ -1,0 +1,16 @@
+# Directories
+.husky/_
+.idea
+.vercel
+_playwright-report
+_playwright-results
+dist
+lib
+node_modules
+
+# Files
+.DS_Store
+*.log
+
+# Exceptions
+!.gitkeep
