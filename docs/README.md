@@ -1,29 +1,18 @@
-# 🏠 我的个人网站
+# 🏠 我的空间
 
-> 欢迎来到我的主页！这是用 [Docsify](https://docsify.js.org/) 搭建的文档网站 ✨
-
----
-
-## 👋 关于我
-
-你好！我是 **[你的名字]**，一个热爱技术的开发者。
-
-- 🎯 兴趣：编程 / 设计 / 写作 / 开源
-- 💻 技术栈：JavaScript / Python / Vue / React ...
-- 📍 坐标：[你的城市]
-
-## 📝 最新文章
-
-- [我的第一篇文章](articles/post1.md)
-- [学习笔记：XXX](articles/post2.md)
-- [项目实战：YYY](articles/post3.md)
-
-## 🔗 有用的链接
-
-- [GitHub](https://github.com/你的用户名) - 我的代码仓库
-- [博客](https://你的博客地址) - 技术博客
-- [Twitter/X](https://twitter.com/你的账号) - 社交媒体
+> 记录技术 · 分享学习 · 探索世界 ✨
 
 ---
 
-*本站由 [Docsify](https://docsify.js.org/) 驱动 | 用 ❤️ 构建*
+## 📚 学习笔记
+
+- [Linux 学习](notes/linux.md) — Linux 系统与命令行笔记
+- [FreeRTOS 学习](notes/freertos.md) — 实时操作系统学习记录
+
+## 🛠️ 项目相关
+
+- [BMS 电池管理系统](projects/bms.md) — 电池管理系统的设计与实现
+
+---
+
+*本站由 [Docsify](https://docsify.js.org/) 驱动*
