@@ -1,85 +1,76 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的个人网站</title>
-
-  <!-- Docsify 核心样式（使用稳定版 v4） -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/themes/vue.css">
-
-  <!-- 自定义样式 -->
-  <style>
-    .sidebar {
-      background-color: #f8f8f8;
-    }
-    .content {
-      padding-top: 60px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的个人网站</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/themes/vue.css">
+<style>
+:root{--theme-color:#42b983;--theme-color-light:#66cdaa;--sidebar-bg:#f8f9fa;--content-max-width:900px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+.sidebar{background:var(--sidebar-bg);border-right:1px solid #eee;padding-top:60px}
+.sidebar>h1 .app-name-link{font-weight:700;letter-spacing:1px}
+.sidebar ul li a{border-left:3px solid transparent;transition:all .25s ease;padding-left:14px!important;font-size:15px}
+.sidebar ul li.active>a{color:var(--theme-color)!important;font-weight:600;border-left-color:var(--theme-color);background:linear-gradient(to right,rgba(66,185,131,.08),transparent)}
+.sidebar ul li:hover>a{color:var(--theme-color)!important;background:linear-gradient(to right,rgba(66,185,131,.05),transparent)}
+.content{padding-top:70px;max-width:var(--content-max-width);margin:0 auto}
+.markdown-section{line-height:1.85;color:#333}
+.markdown-section h1,.markdown-section h2,.markdown-section h3{font-weight:700;color:#1a1a2e;margin-top:2em;padding-bottom:.4em;border-bottom:2px solid #f0f0f0}
+.markdown-section h1{font-size:2em}.markdown-section h2{font-size:1.6em}.markdown-section h3{font-size:1.3em}
+.markdown-section p{margin:1em 0;text-align:justify}
+.markdown-section code{background:#f5f7fa;color:#e74c3c;padding:3px 7px;border-radius:4px;font-size:90%}
+.markdown-section pre code{background:transparent;color:inherit;padding:0}
+.markdown-section pre{border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.06);border:1px solid #e8ecf1}
+.markdown-section blockquote{border-left:4px solid var(--theme-color);background:linear-gradient(135deg,rgba(66,185,131,.05),rgba(102,205,170,.03));padding:12px 20px;border-radius:0 8px 8px 0;color:#555}
+.markdown-section table{border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.markdown-section table th{background:linear-gradient(135deg,var(--theme-color),var(--theme-color-light));color:white;font-weight:600}
+.markdown-section img{border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.1);transition:transform .3s ease}
+.markdown-section img:hover{transform:scale(1.02)}
+.markdown-section a{color:var(--theme-color);text-decoration:none;position:relative}
+.markdown-section a::after{content:"";position:absolute;bottom:-2px;left:0;width:0;height:2px;background:var(--theme-color);transition:width .3s ease}
+.markdown-section a:hover::after{width:100%}
+.cover{background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%)!important;min-height:100vh}
+.cover .cover-main{padding-top:20vh}
+.cover h1{font-size:3rem!important;font-weight:800!important;color:white!important;text-shadow:0 4px 24px rgba(0,0,0,.2);letter-spacing:3px}
+.cover h1 small{opacity:.8;font-size:40%!important}
+.cover p{color:rgba(255,255,255,.92)!important;font-size:1.25rem!important;text-shadow:0 2px 8px rgba(0,0,0,.15);margin:18px auto!important}
+.cover ul li{color:rgba(255,255,255,.88)!important;font-size:1.1rem!important}
+.cover a{display:inline-block;padding:13px 36px;background:rgba(255,255,255,.22);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.35);border-radius:50px;color:white!important;font-size:1.05rem;font-weight:600;transition:all .35s ease;text-decoration:none!important;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.cover a:hover{background:rgba(255,255,255,.38);transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.18)}
+.cover a::after{display:none!important}
+.app-nav{margin-right:30px}
+.app-nav ul li a{color:#555;font-weight:500;transition:color .25s ease;font-size:15px}
+.app-nav ul li a:hover{color:var(--theme-color)}
+.search input{border-radius:20px;border:2px solid #e0e0e0;transition:all .3s ease;padding:6px 16px!important}
+.search input:focus{border-color:var(--theme-color);box-shadow:0 0 0 3px rgba(66,185,131,.15);outline:none}
+.docsify-copy-code-button{background:var(--theme-color)!important;border-radius:0 8px 0 8px!important;font-size:12px!important;padding:4px 10px!important;transition:all .25s ease!important}
+.docsify-copy-code-button.success{background:#27ae60!important}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#ccc;border-radius:4px}::-webkit-scrollbar-thumb:hover{background:#aaa}
+@media screen and (max-width:768px){.cover h1{font-size:2rem!important}.content{max-width:100%;padding:60px 16px 0}}
+</style>
 </head>
-
 <body>
-  <!-- Docsify 挂载点 -->
-  <div id="app">加载中...</div>
-
-  <!-- Docsify 配置 -->
-  <script>
-    window.$docsify = {
-      // 网站名称（显示在左上角）
-      name: '我的网站',
-
-      // 点击名称跳转到首页
-      nameLink: '/',
-
-      // 仓库地址（显示右上角 GitHub 角标）
-      repo: 'QingFeng616/QingFeng616.github.io',
-
-      // 加载侧边栏
-      loadSidebar: true,
-
-      // 加载顶部导航栏
-      loadNavbar: true,
-
-      // 封面页
-      coverpage: true,
-
-      // 最大标题级别显示在侧边栏
-      subMaxLevel: 3,
-
-      // 滚动到顶部
-      auto2top: true,
-
-      // 全文搜索配置
-      search: {
-        maxAge: 86400000,
-        paths: 'auto',
-        placeholder: '搜索...',
-        noData: '没有找到结果!',
-        depth: 6
-      },
-
-      // 复制代码按钮
-      copyCode: {
-        buttonText: '复制',
-        errorText: '错误',
-        successText: '已复制!'
-      }
-    };
-  </script>
-
-  <!-- Docsify 核心库（稳定版 v4） -->
-  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
-
-  <!-- 搜索插件 -->
-  <script src="https://cdn.jsdelivr.net/npm/docsify@4/plugins/search.min.js"></script>
-
-  <!-- 复制代码插件 -->
-  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@2/dist/docsify-copy-code.min.js"></script>
-
-  <!-- 代码高亮 -->
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
+<div id="app">加载中...</div>
+<script>
+window.$docsify={
+name:'🏠 我的空间',nameLink:'/',
+repo:'QingFeng616/QingFeng616.github.io',
+loadSidebar:true,loadNavbar:true,
+coverpage:true,subMaxLevel:3,auto2top:true,
+search:{maxAge:86400000,paths:'auto',placeholder:'🔍 搜索...',noData:'😅 没有找到结果',depth:6},
+copyCode:{buttonText:'复制',errorText:'错误',successText:'已复制!'},
+pagination:{previousText:'← 上一篇',nextText:'下一篇 →'}
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify@4/plugins/search.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@2/dist/docsify-copy-code.min.js"></script>
+<script src="https://unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-markdown.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
 </body>
 </html>
