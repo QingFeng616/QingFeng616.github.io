@@ -4,6 +4,7 @@
 
   - [Linux 学习](notes/linux.md)
   - [FreeRTOS 学习](notes/freertos.md)
+  - [git 学习](notes/git.md)
 
 - 🛠️ 项目相关
 
