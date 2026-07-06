@@ -28,6 +28,112 @@ vTaskStartScheduler();
 // 延时
 vTaskDelay(pdMS_TO_TICKS(100));
 ```
+## FreeRTOS任务调度及任务优先级
+
+### 一、调度器原理
+
+FreeRTOS 使用**抢占式调度算法**，同时支持时间片调度。调度器的核心职责是：
+- 选择最高优先级的就绪任务运行
+- 处理任务的状态转换（就绪、运行、阻塞、挂起）
+- 管理任务上下文切换
+
+### 二、任务优先级
+
+FreeRTOS 的任务优先级范围由 `FreeRTOSConfig.h` 中的 `configMAX_PRIORITIES` 宏定义决定：
+
+```c
+// FreeRTOSConfig.h 中的配置
+#define configMAX_PRIORITIES    (32)  // 默认值为32
+```
+
+- **优先级范围**：0 ~ configMAX_PRIORITIES - 1
+- **优先级规则**：数字越大，优先级越高
+- **默认最高优先级**：31（当configMAX_PRIORITIES=32时）
+- **空闲任务优先级**：固定为0
+
+```c
+// 设置任务优先级为最高优先级
+vTaskPrioritySet(xTaskHandle, configMAX_PRIORITIES - 1);
+
+// 设置任务优先级为次高优先级
+vTaskPrioritySet(xTaskHandle, configMAX_PRIORITIES - 2);
+
+// 获取当前任务优先级
+UBaseType_t uxPriority = uxTaskPriorityGet(NULL);
+```
+
+#### 优先级配置建议
+
+1. **合理划分优先级层次**：
+   - 0：空闲任务
+   - 1~5：低优先级任务（如数据采集、日志记录）
+   - 6~15：中优先级任务（如数据处理、通信协议）
+   - 16~31：高优先级任务（如中断服务、实时控制）
+
+2. **避免优先级数量过多**：
+   - 过多的优先级会增加调度器的开销
+   - 建议根据实际需求设置合理的优先级数量
+   - 例如：简单系统可以设置为8个优先级，复杂系统设置为32个
+
+3. **使用优先级宏提高可读性**：
+   ```c
+   // 定义优先级宏
+   #define PRIORITY_IDLE          0
+   #define PRIORITY_LOW           5
+   #define PRIORITY_MEDIUM        15
+   #define PRIORITY_HIGH          25
+   #define PRIORITY_REAL_TIME     31
+   
+   // 使用宏设置任务优先级
+   xTaskCreate(vTaskFunction, "TaskName", STACK_SIZE, NULL, PRIORITY_HIGH, &xTaskHandle);
+   ```
+
+### 三、调度策略
+
+1. **抢占式调度**：
+   - 高优先级任务可以抢占低优先级任务的CPU使用权
+   - 当有更高优先级任务进入就绪态时，立即触发上下文切换
+
+2. **时间片调度**：
+   - 相同优先级的任务轮流执行，每个任务执行一个时间片（由`configTICK_RATE_HZ`决定）
+   - 时间片结束时触发上下文切换
+
+3. **协作式调度**（可选）：
+   - 任务主动调用`taskYIELD()`放弃CPU使用权
+   - 需要在`FreeRTOSConfig.h`中配置`configUSE_PREEMPTION 0`
+
+### 四、调度器状态
+
+```c
+// 获取调度器状态
+BaseType_t xSchedulerRunning = xTaskGetSchedulerState();
+
+// 调度器未启动
+if (xSchedulerRunning == taskSCHEDULER_NOT_STARTED) {
+    // 执行初始化操作
+}
+
+// 挂起调度器（禁止上下文切换）
+vTaskSuspendAll();
+
+// 恢复调度器
+xTaskResumeAll();
+```
+
+### 五、注意事项
+
+1. **优先级翻转**：
+   - 低优先级任务持有高优先级任务需要的资源时，会导致高优先级任务被阻塞
+   - 解决方案：使用**优先级继承 mutex**（`xSemaphoreCreateMutex()`）
+
+2. **任务饥饿**：
+   - 低优先级任务可能长时间无法获得CPU使用权
+   - 解决方案：合理设置任务优先级，避免长时间占用CPU
+
+3. **中断嵌套**：
+   - 中断服务函数中可以调用FreeRTOS API，但需要使用带`FromISR`后缀的版本
+   - 高优先级中断可以抢占低优先级中断和任务
+
 ## 移植FreeRTOS后的delay函数重写
 
 ### 一、取消注释
