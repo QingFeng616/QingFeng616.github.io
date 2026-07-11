@@ -35,155 +35,146 @@ head file   # 查看文件开头10行
 less file   # 分页查看文件内容（按q退出）
 more file   # 分页查看文件内容
 ```
+## Ubuntu文件系统结构
 
-### 系统信息
-
-```bash
-uname -a    # 系统内核信息
-uname -r    # 内核版本
-cat /etc/os-release  # 发行版信息
-hostname    # 主机名
-date        # 显示当前时间
-time        # 显示命令执行时间
-top         # 实时进程监控（按q退出）
-htop        # 增强型进程监控（需安装）
-df -h       # 磁盘使用情况（人性化显示）
-du -sh dir  # 查看目录大小
-free -h     # 内存使用情况
-whoami      # 当前用户
-who         # 登录用户信息
-last        # 最近登录历史
-```
-
----
-
-## 用户与权限
-
-### 用户管理
+Ubuntu遵循标准的Linux文件系统层次标准（FHS）。以下是主要目录结构及说明：
 
 ```bash
-useradd username  # 创建用户
-userdel username  # 删除用户
-usermod -aG group username  # 将用户添加到组
-passwd username   # 修改用户密码
-su username       # 切换用户
-sudo command      # 以管理员权限执行命令
+/
+├── bin/          # 二进制可执行文件（所有用户可用的基础命令）
+├── sbin/         # 系统管理命令（主要供root使用）
+├── boot/         # 引导加载程序文件（内核、initrd）
+├── dev/          # 设备文件（如/dev/sda、/dev/tty）
+├── etc/          # 系统配置文件
+├── home/         # 用户主目录（/home/username）
+├── lib/          # 共享库文件
+├── lib64/        # 64位共享库
+├── media/        # 可移动设备挂载点
+├── mnt/          # 临时挂载的文件系统
+├── opt/          # 可选应用程序软件包
+├── proc/         # 虚拟文件系统（进程信息、系统信息）
+├── root/         # root用户的主目录
+├── run/          # 运行时变量数据（如PID文件）
+├── srv/          # 服务相关数据
+├── sys/          # 虚拟文件系统（硬件设备信息）
+├── tmp/          # 临时文件（重启后清空）
+├── usr/          # 用户实用程序和数据
+│   ├── bin/      # 用户命令
+│   ├── sbin/     # 系统管理命令
+│   ├── lib/      # 库文件
+│   ├── local/    # 本地安装的软件
+│   └── share/    # 共享数据（文档、图标等）
+└── var/          # 可变数据（日志、缓存等）
+    ├── log/      # 日志文件
+    ├── cache/    # 缓存数据
+    ├── spool/    # 假脱机数据（邮件、打印任务等）
+    └── tmp/      # 临时文件
 ```
 
-### 权限管理
+### 常用系统路径说明
 
 ```bash
-chmod 755 file    # 设置文件权限为rwxr-xr-x
-chmod +x file     # 添加执行权限
-chmod -R 777 dir  # 递归设置目录权限
-chown user:group file  # 修改文件所有者和组
-chown -R user:group dir  # 递归修改目录所有者
+# 查看磁盘分区与挂载点
+df -h                    # 以人类可读格式显示磁盘使用情况
+lsblk                    # 列出块设备
+mount                    # 查看已挂载的文件系统
+
+# 关键配置文件路径
+/etc/passwd              # 用户账户信息
+/etc/group               # 用户组信息
+/etc/fstab               # 文件系统挂载表
+/etc/hosts               # 主机名映射
+/etc/hostname            # 主机名
+/etc/resolv.conf         # DNS配置
+/etc/apt/sources.list    # 软件源列表
+
+# 常用日志文件
+/var/log/syslog          # 系统日志
+/var/log/auth.log        # 认证日志
+/var/log/dmesg           # 内核日志
+/var/log/apt/history.log # 软件包安装历史
+
+# 查看内核与系统信息
+uname -a                 # 查看内核版本及系统架构
+cat /proc/version        # 查看详细内核版本信息
+cat /proc/cpuinfo        # 查看CPU信息
+cat /proc/meminfo        # 查看内存信息
+hostname                 # 查看/设置主机名
 ```
 
----
-
-## 网络命令
+### 文件权限管理
 
 ```bash
-ifconfig    # 查看网络接口信息（传统命令）
-ip addr     # 查看网络接口信息（新命令）
-ping host   # 测试网络连通性
-ping -c 4 host  # 发送4个包后停止
-curl url    # 下载网页内容
-wget url    # 下载文件
-netstat -tulpn  # 查看监听端口
-ss -tulpn   # 查看监听端口（新命令）
-traceroute host  # 跟踪路由路径
-mtr host    # 结合ping和traceroute的工具
-ssh user@host    # 远程登录
-scp file user@host:/path  # 远程复制文件
+# 权限表示方式（d rwx r-x r--）
+# 第一位：文件类型（d=目录，-=文件，l=链接）
+# 后9位：所有者权限 / 组权限 / 其他用户权限
+# r=读(4)  w=写(2)  x=执行(1)
+
+ls -l                    # 查看文件权限
+chmod 755 file           # 设置权限为rwxr-xr-x
+chmod u+x file           # 给文件所有者添加执行权限
+chmod g-w file           # 移除组的写权限
+chmod o+r file           # 给其他用户添加读权限
+chown user:group file    # 修改文件所有者和所属组
+chown -R user:group dir  # 递归修改目录权限
+
+# 特殊权限
+chmod u+s file           # 设置SUID（以文件所有者身份执行）
+chmod g+s dir            # 设置SGID（新创建的文件继承目录所属组）
+chmod +t dir             # 设置粘滞位（仅所有者可删除目录内文件）
 ```
 
----
-
-## 进程管理
+### 链接文件
 
 ```bash
-ps aux      # 查看所有进程
-ps aux | grep process  # 查找特定进程
-kill pid    # 终止进程
-kill -9 pid # 强制终止进程
-pkill process_name  # 根据进程名终止进程
-pgrep process_name  # 根据进程名查找PID
-nohup command &    # 后台运行命令（退出终端后继续运行）
-command &   # 后台运行命令（退出终端后停止）
-jobs        # 查看后台作业
-fg %1       # 将后台作业1调到前台
+# 硬链接（指向同一inode，不能跨分区，不能链接目录）
+ln source_file hard_link
+
+# 软链接（符号链接，可跨分区，可链接目录）
+ln -s source_file soft_link
+
+# 查看链接指向
+ls -l soft_link          # 显示链接指向的目标
+readlink soft_link       # 查看符号链接指向
+stat file                # 查看文件inode信息
 ```
 
----
-
-## 压缩与解压
+### 挂载管理
 
 ```bash
-tar -czvf archive.tar.gz dir  # 压缩目录为tar.gz
-tar -xzvf archive.tar.gz      # 解压tar.gz
-tar -cjvf archive.tar.bz2 dir # 压缩目录为tar.bz2
-tar -xjvf archive.tar.bz2     # 解压tar.bz2
-zip archive.zip file1 file2   # 压缩为zip
-unzip archive.zip             # 解压zip
+# 挂载设备
+mount /dev/sdb1 /mnt/data              # 挂载分区到指定目录
+mount -t ext4 /dev/sdb1 /mnt/data      # 指定文件系统类型
+mount -o rw,remount /mnt/data          # 重新挂载为读写模式
+
+# 卸载设备
+umount /mnt/data                       # 卸载挂载点
+umount /dev/sdb1                       # 通过设备名卸载
+
+# 开机自动挂载（编辑/etc/fstab）
+# /dev/sdb1  /mnt/data  ext4  defaults  0  2
+# 格式：设备  挂载点  文件系统  挂载选项  dump  fsck顺序
+
+# 查看块设备UUID（用于fstab中稳定标识）
+blkid
+ls -l /dev/disk/by-uuid/
 ```
 
----
-
-## 文本处理
+### 进程与系统监控路径
 
 ```bash
-grep pattern file  # 在文件中查找匹配模式
-grep -i pattern file  # 忽略大小写
-grep -r pattern dir   # 递归查找目录
-awk '{print $1}' file  # 打印文件第一列
-sort file  # 排序文件内容
-sort -n file  # 按数字排序
-uniq file  # 去除重复行（需先排序）
-wc -l file  # 统计文件行数
-wc -w file  # 统计文件单词数
-wc -c file  # 统计文件字符数
+# proc文件系统（虚拟文件系统，反映内核运行状态）
+/proc/PID/               # 进程PID的详细信息
+/proc/PID/status         # 进程状态信息
+/proc/PID/maps           # 进程内存映射
+/proc/PID/cmdline        # 进程启动命令
+
+# sys文件系统（反映硬件设备和内核参数）
+/sys/class/              # 按类别组织的设备
+/sys/block/              # 块设备信息
+/sys/bus/                # 总线设备信息
+/sys/devices/            # 所有设备的层级结构
 ```
-
----
-
-## 实用技巧
-
-### 历史命令
-
-```bash
-history     # 查看命令历史
-!100        # 执行历史中第100条命令
-!ls         # 执行最近一次以ls开头的命令
-Ctrl + R    # 搜索历史命令
-```
-
-### 快捷键
-
-```bash
-Ctrl + C    # 终止当前命令
-Ctrl + D    # 退出当前会话
-Ctrl + L    # 清屏
-Ctrl + A    # 移动到命令行开头
-Ctrl + E    # 移动到命令行结尾
-Ctrl + U    # 删除光标前的内容
-Ctrl + K    # 删除光标后的内容
-Ctrl + W    # 删除光标前的单词
-```
-
-### 其他技巧
-
-```bash
-> file       # 清空文件内容
-command > file  # 将命令输出重定向到文件（覆盖）
-command >> file # 将命令输出追加到文件
-command1 | command2  # 将command1的输出作为command2的输入
-```
-
----
-
----
 
 ## 嵌入式Linux核心专题
 
