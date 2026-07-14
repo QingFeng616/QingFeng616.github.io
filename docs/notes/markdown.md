@@ -188,22 +188,23 @@ flowchart LR
 
 ## **docsify-tabs**
 
+``` 
 <!-- tabs:start -->
 
-/#### **English**
+#### **English**
 
 Hello!
 
-/#### **French**
+#### **French**
 
 Bonjour!
 
-/#### **Italian**
+#### **Italian**
 
 Ciao!
 
 <!-- tabs:end -->
-
+```
 
 #### **待加入**
 

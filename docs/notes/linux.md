@@ -6,7 +6,9 @@
 
 ## 基础命令
 
-### 文件操作
+<!-- tabs:start -->
+
+### **文件常用操作**
 
 ```bash
 ls          # 列出文件
@@ -35,7 +37,67 @@ head file   # 查看文件开头10行
 less file   # 分页查看文件内容（按q退出）
 more file   # 分页查看文件内容
 ```
+### **文件权限管理**
+
+```bash
+# 权限表示方式（d rwx r-x r--）
+# 第一位：文件类型（d=目录，-=文件，l=链接）
+# 后9位：所有者权限 / 组权限 / 其他用户权限
+# r=读(4)  w=写(2)  x=执行(1)
+
+ls -l                    # 查看文件权限
+chmod 755 file           # 设置权限为rwxr-xr-x
+chmod u+x file           # 给文件所有者添加执行权限
+chmod g-w file           # 移除组的写权限
+chmod o+r file           # 给其他用户添加读权限
+chown user:group file    # 修改文件所有者和所属组
+chown -R user:group dir  # 递归修改目录权限
+
+# 特殊权限
+chmod u+s file           # 设置SUID（以文件所有者身份执行）
+chmod g+s dir            # 设置SGID（新创建的文件继承目录所属组）
+chmod +t dir             # 设置粘滞位（仅所有者可删除目录内文件）
+```
+### **链接文件**
+
+```bash
+# 硬链接（指向同一inode，不能跨分区，不能链接目录）
+ln source_file hard_link
+
+# 软链接（符号链接，可跨分区，可链接目录）
+ln -s source_file soft_link
+
+# 查看链接指向
+ls -l soft_link          # 显示链接指向的目标
+readlink soft_link       # 查看符号链接指向
+stat file                # 查看文件inode信息
+```
+### **挂载管理**
+
+```bash
+# 挂载设备
+mount /dev/sdb1 /mnt/data              # 挂载分区到指定目录
+mount -t ext4 /dev/sdb1 /mnt/data      # 指定文件系统类型
+mount -o rw,remount /mnt/data          # 重新挂载为读写模式
+
+# 卸载设备
+umount /mnt/data                       # 卸载挂载点
+umount /dev/sdb1                       # 通过设备名卸载
+
+# 开机自动挂载（编辑/etc/fstab）
+# /dev/sdb1  /mnt/data  ext4  defaults  0  2
+# 格式：设备  挂载点  文件系统  挂载选项  dump  fsck顺序
+
+# 查看块设备UUID（用于fstab中稳定标识）
+blkid
+ls -l /dev/disk/by-uuid/    # 卸载挂载点
+```                  
+
+<!-- tabs:end -->
 ## Ubuntu文件系统结构
+
+<!-- tabs:start -->
+### **文件系统结构**
 
 Ubuntu遵循标准的Linux文件系统层次标准（FHS）。以下是主要目录结构及说明：
 
@@ -70,8 +132,7 @@ Ubuntu遵循标准的Linux文件系统层次标准（FHS）。以下是主要目
     ├── spool/    # 假脱机数据（邮件、打印任务等）
     └── tmp/      # 临时文件
 ```
-
-### 常用系统路径说明
+### **常用系统路径说明**
 
 ```bash
 # 查看磁盘分区与挂载点
@@ -101,66 +162,7 @@ cat /proc/cpuinfo        # 查看CPU信息
 cat /proc/meminfo        # 查看内存信息
 hostname                 # 查看/设置主机名
 ```
-
-### 文件权限管理
-
-```bash
-# 权限表示方式（d rwx r-x r--）
-# 第一位：文件类型（d=目录，-=文件，l=链接）
-# 后9位：所有者权限 / 组权限 / 其他用户权限
-# r=读(4)  w=写(2)  x=执行(1)
-
-ls -l                    # 查看文件权限
-chmod 755 file           # 设置权限为rwxr-xr-x
-chmod u+x file           # 给文件所有者添加执行权限
-chmod g-w file           # 移除组的写权限
-chmod o+r file           # 给其他用户添加读权限
-chown user:group file    # 修改文件所有者和所属组
-chown -R user:group dir  # 递归修改目录权限
-
-# 特殊权限
-chmod u+s file           # 设置SUID（以文件所有者身份执行）
-chmod g+s dir            # 设置SGID（新创建的文件继承目录所属组）
-chmod +t dir             # 设置粘滞位（仅所有者可删除目录内文件）
-```
-
-### 链接文件
-
-```bash
-# 硬链接（指向同一inode，不能跨分区，不能链接目录）
-ln source_file hard_link
-
-# 软链接（符号链接，可跨分区，可链接目录）
-ln -s source_file soft_link
-
-# 查看链接指向
-ls -l soft_link          # 显示链接指向的目标
-readlink soft_link       # 查看符号链接指向
-stat file                # 查看文件inode信息
-```
-
-### 挂载管理
-
-```bash
-# 挂载设备
-mount /dev/sdb1 /mnt/data              # 挂载分区到指定目录
-mount -t ext4 /dev/sdb1 /mnt/data      # 指定文件系统类型
-mount -o rw,remount /mnt/data          # 重新挂载为读写模式
-
-# 卸载设备
-umount /mnt/data                       # 卸载挂载点
-umount /dev/sdb1                       # 通过设备名卸载
-
-# 开机自动挂载（编辑/etc/fstab）
-# /dev/sdb1  /mnt/data  ext4  defaults  0  2
-# 格式：设备  挂载点  文件系统  挂载选项  dump  fsck顺序
-
-# 查看块设备UUID（用于fstab中稳定标识）
-blkid
-ls -l /dev/disk/by-uuid/
-```
-
-### 进程与系统监控路径
+### **进程与系统监控路径**
 
 ```bash
 # proc文件系统（虚拟文件系统，反映内核运行状态）
@@ -175,6 +177,8 @@ ls -l /dev/disk/by-uuid/
 /sys/bus/                # 总线设备信息
 /sys/devices/            # 所有设备的层级结构
 ```
+<!-- tabs:end -->
+
 
 ## 嵌入式Linux核心专题
 
@@ -191,14 +195,23 @@ arm-linux-gnueabihf-gcc --version
 export ARCH=arm
 export CROSS_COMPILE=arm-linux-gnueabihf-
 export PATH=$PATH:/path/to/toolchain/bin
-#常用命令
+```
+### 2. 常用命令
+<!-- tabs:start -->
+
+#### **常用命令**
+
+```bash
 arm-linux-gnueabihf-gcc -o myprogram myprogram.c
 arm-linux-gnueabihf-ls -l myprogram
 arm-linux-gnueabihf-ls - -Ttext myprogram > myprogram.text
 arm-linux-gnueabihf-size -A myprogram
 ```
-### Makefile 
-#### Makefile 规则格式
+<!-- tabs:end -->
+
+### Makefile
+
+Makefile 规则格式
 
     Makefile 里面是由一系列的规则组成的，这些规则格式如下：
     目标…... : 依赖文件集合……
@@ -207,8 +220,8 @@ arm-linux-gnueabihf-size -A myprogram
 #### Makefile 变量
 ```bash
     跟 C 语言一样 Makefile 也支持变量的，先看一下前面的例子：
-main: main.o input.o calcu.o
-gcc -o main main.o input.o calcu.o
+    main: main.o input.o calcu.o
+    gcc -o main main.o input.o calcu.o
     上述 Makefile 语句中， main.o input.o 和 calcue.o 这三个依赖文件，我们输入了两遍，我们
     这个 Makefile 比较小，如果 Makefile 复杂的时候这种重复输入的工作就会非常费时间，而且非常容易输错，为了解决这个问题， Makefile 加入了变量支持。不像 C 语言中的变量有 int、 char等各种类型， Makefile 中的变量都是字符串！类似 C 语言中的宏。使用变量将上面的代码修改，
     示例代码 3.4.2.1 Makefile 变量使用
@@ -216,8 +229,8 @@ gcc -o main main.o input.o calcu.o
     2 objects = main.o input.o calcu.o
     3 main: $(objects)
     4 gcc -o main $(objects)
-```bash
 ```
+
 #### Makefile 模式规则
 ```bash
     模式规则中，至少在规则的目标定定义中要包涵“%”，否则就是一般规则，目标中的“%”表示对文件名的匹配，“%”表示长度任意的非空字符串，比如“%.c”就是所有的以.c 结尾的文件，类似与通配符， a.%.c 就表示以 a.开头，以.c 结束的所有文件,当“%”出现在目标中的时候，目标中“%”所代表的值决定了依赖中的“%”值，使用方法如下：
