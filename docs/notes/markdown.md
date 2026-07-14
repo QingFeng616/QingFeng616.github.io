@@ -182,12 +182,38 @@ flowchart LR
     B -->|是| C[执行操作]
     B -->|否| D[结束]
 ```
+# 八、支持docsify的插件的添加及使用方式
 
-## 八、实用技巧
-1. **使用编辑器预览**：VS Code、Typora、Obsidian 等编辑器支持实时预览
-2. **语法兼容**：不同平台对 Markdown 支持略有差异，注意测试
-3. **快捷键**：常用编辑器都有 Markdown 快捷输入方式，提高编写效率
-4. **模板复用**：整理常用的 Markdown 模板，快速生成文档
+<!-- tabs:start -->
+
+## **docsify-tabs**
+
+<!-- tabs:start -->
+
+/#### **English**
+
+Hello!
+
+/#### **French**
+
+Bonjour!
+
+/#### **Italian**
+
+Ciao!
+
+<!-- tabs:end -->
+
+
+#### **待加入**
+
+Bonjour!
+
+#### **待加入**
+
+Ciao!
+
+<!-- tabs:end -->
 
 ---
 > 持续更新中...
