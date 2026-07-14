@@ -191,6 +191,51 @@ arm-linux-gnueabihf-gcc --version
 export ARCH=arm
 export CROSS_COMPILE=arm-linux-gnueabihf-
 export PATH=$PATH:/path/to/toolchain/bin
+#常用命令
+arm-linux-gnueabihf-gcc -o myprogram myprogram.c
+arm-linux-gnueabihf-ls -l myprogram
+arm-linux-gnueabihf-ls - -Ttext myprogram > myprogram.text
+arm-linux-gnueabihf-size -A myprogram
+```
+### Makefile 
+#### Makefile 规则格式
+
+    Makefile 里面是由一系列的规则组成的，这些规则格式如下：
+    目标…... : 依赖文件集合……
+    命令 1
+    命令 2
+#### Makefile 变量
+```bash
+    跟 C 语言一样 Makefile 也支持变量的，先看一下前面的例子：
+main: main.o input.o calcu.o
+gcc -o main main.o input.o calcu.o
+    上述 Makefile 语句中， main.o input.o 和 calcue.o 这三个依赖文件，我们输入了两遍，我们
+    这个 Makefile 比较小，如果 Makefile 复杂的时候这种重复输入的工作就会非常费时间，而且非常容易输错，为了解决这个问题， Makefile 加入了变量支持。不像 C 语言中的变量有 int、 char等各种类型， Makefile 中的变量都是字符串！类似 C 语言中的宏。使用变量将上面的代码修改，
+    示例代码 3.4.2.1 Makefile 变量使用
+    1 #Makefile 变量的使用
+    2 objects = main.o input.o calcu.o
+    3 main: $(objects)
+    4 gcc -o main $(objects)
+```bash
+```
+#### Makefile 模式规则
+```bash
+    模式规则中，至少在规则的目标定定义中要包涵“%”，否则就是一般规则，目标中的“%”表示对文件名的匹配，“%”表示长度任意的非空字符串，比如“%.c”就是所有的以.c 结尾的文件，类似与通配符， a.%.c 就表示以 a.开头，以.c 结束的所有文件,当“%”出现在目标中的时候，目标中“%”所代表的值决定了依赖中的“%”值，使用方法如下：
+    %.o : %.c
+    gcc -c -o $@ $<
+```
+#### 自动化变量
+![alt text](../_images/自动化变量.png)
+
+# 编译内核模块
+
+make ARCH=arm -j$(nproc) modules
+
+# 编译内核
+make ARCH=arm -j$(nproc) uImage
+
+# 编译设备树
+make ARCH=arm dtbs
 ```
 
 ### 2. 内核与驱动开发基础
