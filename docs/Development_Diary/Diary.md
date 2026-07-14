@@ -4,21 +4,7 @@
 ## 简介
 本开发日记记录了在开发过程中遇到的问题、解决方法以及开发进度等。
 
-<!-- tabs:start -->
 
-#### **English**
-
-Hello!
-
-#### **French**
-
-Bonjour!
-
-#### **Italian**
-
-Ciao!
-
-<!-- tabs:end -->
 
 ## 问题记录及解决方案
 ### BMS 开发日记
