@@ -37,6 +37,7 @@ head file   # 查看文件开头10行
 less file   # 分页查看文件内容（按q退出）
 more file   # 分页查看文件内容
 ```
+
 ### **文件权限管理**
 
 ```bash
@@ -58,6 +59,7 @@ chmod u+s file           # 设置SUID（以文件所有者身份执行）
 chmod g+s dir            # 设置SGID（新创建的文件继承目录所属组）
 chmod +t dir             # 设置粘滞位（仅所有者可删除目录内文件）
 ```
+
 ### **链接文件**
 
 ```bash
@@ -72,6 +74,7 @@ ls -l soft_link          # 显示链接指向的目标
 readlink soft_link       # 查看符号链接指向
 stat file                # 查看文件inode信息
 ```
+
 ### **挂载管理**
 
 ```bash
@@ -91,12 +94,14 @@ umount /dev/sdb1                       # 通过设备名卸载
 # 查看块设备UUID（用于fstab中稳定标识）
 blkid
 ls -l /dev/disk/by-uuid/    # 卸载挂载点
-```                  
+```
 
 <!-- tabs:end -->
+
 ## Ubuntu文件系统结构
 
 <!-- tabs:start -->
+
 ### **文件系统结构**
 
 Ubuntu遵循标准的Linux文件系统层次标准（FHS）。以下是主要目录结构及说明：
@@ -132,6 +137,7 @@ Ubuntu遵循标准的Linux文件系统层次标准（FHS）。以下是主要目
     ├── spool/    # 假脱机数据（邮件、打印任务等）
     └── tmp/      # 临时文件
 ```
+
 ### **常用系统路径说明**
 
 ```bash
@@ -162,6 +168,7 @@ cat /proc/cpuinfo        # 查看CPU信息
 cat /proc/meminfo        # 查看内存信息
 hostname                 # 查看/设置主机名
 ```
+
 ### **进程与系统监控路径**
 
 ```bash
@@ -177,8 +184,8 @@ hostname                 # 查看/设置主机名
 /sys/bus/                # 总线设备信息
 /sys/devices/            # 所有设备的层级结构
 ```
-<!-- tabs:end -->
 
+<!-- tabs:end -->
 
 ## 嵌入式Linux核心专题
 
@@ -196,7 +203,9 @@ export ARCH=arm
 export CROSS_COMPILE=arm-linux-gnueabihf-
 export PATH=$PATH:/path/to/toolchain/bin
 ```
-### 2. 常用命令
+
+#### 1.1 常用命令
+
 <!-- tabs:start -->
 
 #### **常用命令**
@@ -207,9 +216,10 @@ arm-linux-gnueabihf-ls -l myprogram
 arm-linux-gnueabihf-ls - -Ttext myprogram > myprogram.text
 arm-linux-gnueabihf-size -A myprogram
 ```
+
 <!-- tabs:end -->
 
-### Makefile
+#### 1.2 Makefile
 
 Makefile 规则格式
 
@@ -217,7 +227,9 @@ Makefile 规则格式
     目标…... : 依赖文件集合……
     命令 1
     命令 2
+
 #### Makefile 变量
+
 ```bash
     跟 C 语言一样 Makefile 也支持变量的，先看一下前面的例子：
     main: main.o input.o calcu.o
@@ -232,23 +244,185 @@ Makefile 规则格式
 ```
 
 #### Makefile 模式规则
+
 ```bash
     模式规则中，至少在规则的目标定定义中要包涵“%”，否则就是一般规则，目标中的“%”表示对文件名的匹配，“%”表示长度任意的非空字符串，比如“%.c”就是所有的以.c 结尾的文件，类似与通配符， a.%.c 就表示以 a.开头，以.c 结束的所有文件,当“%”出现在目标中的时候，目标中“%”所代表的值决定了依赖中的“%”值，使用方法如下：
     %.o : %.c
     gcc -c -o $@ $<
 ```
+
 #### 自动化变量
+
 ![alt text](../_images/自动化变量.png)
+
+### 1. Uboot
+
+#### １.１ Uboot的作用
+
+    Uboot就是一个bootloader,作用主要是启动linux系统。最主要的工作就是初始化DDR。因为linux运行在DDR里面。
+    - Uboot是一个通用的bootloader，支持多种架构
+    - Uboot官网下的支持较少，需要自己编译切较为复杂
+    - 对于某款芯片可从SOC厂商下获取定制后的Uboot再根根据自己需求进行修改
+
+#### １.２ Uboot的编译安装
+
+    - 对于Uboot的原始代码，需要自己编译安装,进而在不同开发板下运行。
+
+   <!-- tabs:start -->
+    ### **基础配置**
+
+    ```c
+    1 #!/bin/bash
+    2 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- distclean
+    3 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- (加空格)
+mx6ull_14x14_ddr256_nand_defconfig
+   4 make V=1 ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j12
+   
+    ```
+   <!-- tabs:end -->
+
+上述代码主要指明架构(arm)、交叉编译工具链(arm-linux-gnueabihf-)、配置文件(mx6ull_14x14_ddr256_nand_defconfig)、-j12(并行编译12个线程)。
+
+#### １.３ Uboot的命令
+
+   <!-- tabs:start -->
+    ### **帮助与环境变量**
+
+    ```
+    help                        查看帮助
+    ? cmd                       查看某命令的帮助
+    printenv                    打印所有环境变量
+    printenv bootargs           打印指定变量
+    setenv bootargs 'xxx'       设置环境变量
+    setenv bootargs             删除环境变量（设为空）
+    saveenv                     保存环境变量到Flash
+    ```
+
+    ### **网络命令**
+
+    ```
+    setenv ipaddr 192.168.1.100       设置本机IP
+    setenv serverip 192.168.1.200     设置服务器IP
+    setenv gatewayip 192.168.1.1       设置网关
+    setenv netmask 255.255.255.0       设置子网掩码
+    setenv ethaddr 00:11:22:33:44:55   设置MAC地址
+    saveenv
+    ping 192.168.1.200                 测试网络
+    tftp 80800000 zImage              通过TFTP下载文件到内存
+    tftp 80800000 boot/zImage         指定路径下载
+    ```
+
+    ### **启动linux**
+
+    ```
+    boot                          按bootcmd启动
+    bootm 80800000                启动uImage格式内核
+    bootm 80800000 - 83000000     启动uImage+dtb（-表示无ramdisk）
+    bootz 80800000 - 83000000     启动zImage+dtb
+    go 80800000                   跳转到指定地址执行
+    reset                         重启系统
+    ```
+
+    ```
+    # 典型启动流程示例
+    tftp 80800000 zImage
+    tftp 83000000 imx6ull-alientek-emmc.dtb
+    bootz 80800000 - 83000000
+    ```
+
+    ### **内存操作**
+
+    ```
+    md.b 80800000 10              显示内存（字节），10个
+    md.w 80800000 10              显示内存（字/2字节）
+    md.l 80800000 10              显示内存（长字/4字节）
+    nm.b 80800000                 修改内存（单次）
+    mw.b 80800000 0xff 100        填充内存（100个0xff）
+    cp.b 80800000 81000000 100    内存拷贝（100字节）
+    cmp.b 80800000 81000000 100   内存比较
+    ```
+
+    ### **Flash/SD卡操作**
+
+    ```
+    mmc list                      列出mmc设备
+    mmc dev 0                     切换到mmc 0（SD卡）
+    mmc dev 1                     切换到mmc 1（EMMC）
+    mmc part                      查看分区
+    mmc read 80800000 0 100      读取100个block到内存80800000
+    mmc write 80800000 0 100     写入100个block
+    mmc erase 0 100               擦除
+
+    nand info                     NAND信息
+    nand read 80800000 0 100000  NAND读取
+    nand write 80800000 0 100000 NAND写入
+    nand erase 0 100000           NAND擦除
+    ```
+
+    ### **文件系统**
+
+    ```
+    fatls mmc 0:1                 列出mmc 0第1分区（FAT）
+    fatls mmc 0:1 /boot           列出指定目录
+    fatload mmc 0:1 80800000 zImage  从FAT加载文件到内存
+    fatsize mmc 0:1 zImage        查看文件大小
+    fatwrite mmc 0:1 80800000 test.txt 100  写入文件
+
+    ext2ls mmc 0:2                ext2/ext3/ext4文件列表
+    ext2load mmc 0:2 80800000 zImage
+    ```
+
+    ### **串口下载**
+
+    ```
+    loadb 80800000                kermit协议下载
+    loads 80800000                S-Record格式下载
+    loady 80800000                y-modem协议下载
+    ```
+
+    ### **常用环境变量**
+
+    ```
+    bootargs     内核启动参数，如：
+    setenv bootargs 'console=ttymxc0,115200 root=/dev/mmcblk1p2 rootwait rw'
+
+    bootcmd      自动启动命令，如：
+    setenv bootcmd 'tftp 80800000 zImage; tftp 83000000 dtb; bootz 80800000 - 83000000'
+
+    bootdelay    自动启动倒计时（秒）
+
+    ipaddr       本机IP
+    serverip     TFTP服务器IP
+    gatewayip    网关
+    netmask      子网掩码
+    ethaddr      MAC地址
+    ```
+   <!-- tabs:end -->
+
+### 2. Uboot移植
+ 
+#### 2.1 基本流程
+
+    Uboot移植并非从零开始，而是基于半导体厂商提供的原厂BSP包进行修改。半导体厂商会先将Uboot移植到他们的原厂开发板上并测试好，然后发布为BSP包。我们参考原厂开发板设计硬件，再在原厂BSP包基础上适配自己的硬件。
+
+    移植流程：
+    ① 在Uboot中找到参考开发平台（一般是原厂开发板）
+    ② 参考原厂开发板，将Uboot移植到自己的开发板上
+
+
 
 # 编译内核模块
 
 make ARCH=arm -j$(nproc) modules
 
 # 编译内核
+
 make ARCH=arm -j$(nproc) uImage
 
 # 编译设备树
+
 make ARCH=arm dtbs
+
 ```
 
 ### 2. 内核与驱动开发基础
@@ -361,17 +535,17 @@ cat /proc/<pid>/maps  # 查看进程内存映射
 
 int main() {
     int fd;
-    
+  
     // 导出GPIO
     fd = open("/sys/class/gpio/export", O_WRONLY);
     write(fd, "123", 3);
     close(fd);
-    
+  
     // 设置为输出模式
     fd = open(GPIO_PATH "direction", O_WRONLY);
     write(fd, "out", 3);
     close(fd);
-    
+  
     // 控制LED闪烁
     fd = open(GPIO_PATH "value", O_WRONLY);
     while(1) {
@@ -381,12 +555,12 @@ int main() {
         sleep(1);
     }
     close(fd);
-    
+  
     // 取消导出GPIO
     fd = open("/sys/class/gpio/unexport", O_WRONLY);
     write(fd, "123", 3);
     close(fd);
-    
+  
     return 0;
 }
 ```
@@ -445,7 +619,7 @@ do
     echo "1" > /sys/class/gpio/gpio$GPIO_NUM/value
     echo "Test $i: GPIO set to HIGH"
     sleep 1
-    
+  
     echo "0" > /sys/class/gpio/gpio$GPIO_NUM/value
     echo "Test $i: GPIO set to LOW"
     sleep 1
@@ -481,7 +655,7 @@ do
     echo "Network Status:" >> $LOG_FILE
     ifconfig eth0 | grep "inet addr" >> $LOG_FILE
     echo >> $LOG_FILE
-    
+  
     sleep $INTERVAL
 done
 ```
