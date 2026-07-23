@@ -396,6 +396,79 @@ section.cover a::after{display:none!important}
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important;scroll-behavior:auto!important}
 }
+
+/* ============ 内容排版增强 ============ */
+/* 长代码块限高 + 内部滚动，避免长文被代码撑爆 */
+.markdown-section pre{max-height:480px;overflow:auto}
+/* 中文与中英文混排优化 */
+.markdown-section{
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:"kern" 1,"liga" 1;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+/* 列表标记着色 */
+.markdown-section ul li::marker{color:var(--accent)}
+/* 任务列表复选框 */
+.markdown-section li:has(> input[type=checkbox]){list-style:none;margin-left:-.2em}
+.markdown-section li > input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;
+  width:1.05em;height:1.05em;margin:0 .5em 0 0;
+  vertical-align:-.18em;border:1.5px solid var(--border-strong);
+  border-radius:4px;background:var(--bg);position:relative;cursor:default;
+}
+.markdown-section li > input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+.markdown-section li > input[type=checkbox]:checked::after{
+  content:"";position:absolute;left:.34em;top:.06em;
+  width:.26em;height:.56em;border:solid #fff;border-width:0 2px 2px 0;
+  transform:rotate(45deg);
+}
+/* 键盘按键 */
+.markdown-section kbd{
+  font-family:var(--font-mono);font-size:.8em;
+  background:var(--bg-code);border:1px solid var(--border-strong);
+  border-bottom-width:2px;border-radius:5px;padding:.12em .5em;
+  color:var(--text);box-shadow:var(--shadow-sm);
+}
+/* 表格表头吸顶 */
+.markdown-section thead th{position:sticky;top:60px;z-index:2}
+/* 外链图标 */
+.markdown-section a[href^="http"]::after{content:"↗";font-size:.72em;margin-left:.15em;opacity:.5;vertical-align:.1em}
+.site-footer a[href^="http"]::after{content:none;margin:0}
+/* 引用微调 */
+.markdown-section blockquote{border-left-width:4px}
+/* 提示框 admonition（::: tip / info / warning / danger / success / details） */
+.admonition{margin:1.6em 0;padding:.2em 1.1em;border:1px solid var(--border);border-left:4px solid var(--accent);background:var(--bg-soft);border-radius:var(--radius)}
+.admonition .admonition-title{font-weight:700;margin:.9em 0 .3em;color:var(--text-strong)}
+.admonition.tip{border-left-color:#42b983;background:rgba(66,185,131,.07)}
+.admonition.info{border-left-color:#3b9eff;background:rgba(59,158,255,.07)}
+.admonition.warning{border-left-color:#f1c40f;background:rgba(241,196,15,.08)}
+.admonition.danger{border-left-color:#ff5b5b;background:rgba(255,91,91,.08)}
+.admonition.success{border-left-color:#27ae60;background:rgba(39,174,96,.07)}
+.admonition.details{background:var(--bg-soft)}
+.admonition.details > summary{cursor:pointer;font-weight:700;padding:.7em 0;color:var(--text-strong);list-style:none}
+.admonition.details > summary::-webkit-details-marker{display:none}
+.admonition.details > summary::before{content:"▸ ";color:var(--accent)}
+.admonition.details[open] > summary::before{content:"▾ "}
+html.dark .admonition.tip{background:rgba(79,212,152,.10)}
+html.dark .admonition.info{background:rgba(77,166,255,.10)}
+html.dark .admonition.warning{background:rgba(241,196,15,.10)}
+html.dark .admonition.danger{background:rgba(255,91,91,.12)}
+html.dark .admonition.success{background:rgba(39,174,96,.10)}
+
+/* ============ 首页卡片 ============ */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;margin:1.4em 0}
+.card{
+  display:block;padding:18px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--bg-soft);text-decoration:none!important;color:var(--text);
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--accent)}
+.card .card-icon{font-size:1.7rem;line-height:1}
+.card .card-title{font-weight:700;margin:.55em 0 .25em;color:var(--text-strong);font-size:1.02rem}
+.card:hover .card-title{color:var(--accent)}
+.card .card-desc{font-size:.85rem;color:var(--text-soft);line-height:1.6}
 </style>
 </head>
 <body>
@@ -428,6 +501,18 @@ window.$docsify={
     theme:'classic',
     tabComments:true,
     tabHeadings:true
+  },
+  markdown:{
+    prerender:function(text){
+      return text.replace(/^:::\s*(tip|info|warning|danger|success|details)\b\s*(.*)$([\s\S]*?)^:::\s*$/gm, function(_, type, title, body){
+        var t = title.trim();
+        if(type === 'details'){
+          return '\n<details class="admonition details"><summary class="admonition-title">'+(t||'详情')+'</summary>\n'+body.trim()+'\n</details>\n';
+        }
+        var titleHtml = t ? '<p class="admonition-title">'+t+'</p>' : '';
+        return '\n<div class="admonition '+type+'">'+titleHtml+'\n'+body.trim()+'\n</div>\n';
+      });
+    }
   },
   plugins:[
     function(hook, vm){
