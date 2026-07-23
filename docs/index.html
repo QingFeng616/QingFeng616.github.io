@@ -4,7 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="个人技术空间 · 学习笔记 · 项目分享">
-<title>我的个人网站</title>
+<meta name="author" content="QingFeng616">
+<meta name="theme-color" content="#42b983" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a1d" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="我的空间 · 学习笔记与项目分享">
+<meta property="og:description" content="个人技术空间 · 学习笔记 · 项目分享">
+<meta property="og:image" content="_media/icon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="我的空间 · 学习笔记与项目分享">
+<meta name="twitter:description" content="个人技术空间 · 学习笔记 · 项目分享">
+<title>我的空间</title>
 <link rel="icon" href="_media/favicon.ico">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/themes/vue.css">
 <!-- 提前应用主题，避免暗色模式闪烁 -->
@@ -246,10 +256,21 @@ html.dark .markdown-section pre>code{color:#c9d4dd}
 .markdown-section img{
   border-radius:var(--radius);
   box-shadow:var(--shadow-md);
-  transition:transform .3s ease,box-shadow .3s ease;
+  transition:box-shadow .3s ease;
   max-width:100%;
+  cursor:zoom-in;
 }
-.markdown-section img:hover{transform:scale(1.015);box-shadow:var(--shadow-lg)}
+.markdown-section img:hover{box-shadow:var(--shadow-lg)}
+/* 标题锚点 */
+.markdown-section h2,.markdown-section h3,.markdown-section h4{position:relative}
+.header-anchor{
+  margin-left:.5em;font-weight:400;color:var(--accent);
+  text-decoration:none;opacity:0;font-size:.8em;vertical-align:middle;
+  transition:opacity .2s ease;
+}
+.markdown-section h2:hover .header-anchor,
+.markdown-section h3:hover .header-anchor,
+.markdown-section h4:hover .header-anchor{opacity:1}
 /* tab 容器 */
 .markdown-section .tabs__nav{margin-bottom:.6em;border-bottom:2px solid var(--border)}
 .markdown-section .tabs__tab{border-radius:6px 6px 0 0}
@@ -350,6 +371,7 @@ section.cover a::after{display:none!important}
   border-top:1px solid var(--border);
   color:var(--text-muted);font-size:.85rem;text-align:center;line-height:1.9;
 }
+.site-footer .footer-meta{margin-bottom:.4rem}
 .site-footer a{color:var(--text-muted);border-bottom:1px dotted var(--border-strong)}
 .site-footer a:hover{color:var(--accent)}
 
@@ -410,6 +432,7 @@ window.$docsify={
   plugins:[
     function(hook, vm){
       var progressBar, backToTop, darkToggle;
+      var readingMinutes = 1;
 
       function sunSVG(){
         return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"></path></svg>';
@@ -434,6 +457,25 @@ window.$docsify={
           darkToggle.innerHTML = theme==='dark' ? sunSVG() : moonSVG();
           darkToggle.title = theme==='dark' ? '切换到浅色' : '切换到深色';
         }
+      }
+
+      function addHeadingAnchors(){
+        var hs = document.querySelectorAll('.markdown-section h2, .markdown-section h3, .markdown-section h4');
+        Array.prototype.forEach.call(hs, function(h){
+          if(!h.id || h.querySelector('.header-anchor')) return;
+          var hid = h.id;
+          var a = document.createElement('a');
+          a.className = 'header-anchor';
+          a.href = '#' + hid;
+          a.textContent = '#';
+          a.setAttribute('aria-hidden','true');
+          a.addEventListener('click', function(e){
+            e.preventDefault();
+            h.scrollIntoView({behavior:'smooth', block:'start'});
+            if(history.replaceState) history.replaceState(null, '', '#' + hid);
+          });
+          h.appendChild(a);
+        });
       }
 
       function updateProgress(){
@@ -506,14 +548,28 @@ window.$docsify={
         setTimeout(function(){
           buildUI();
           updateProgress();
-        }, 60);
+          addHeadingAnchors();
+        }, 70);
       });
 
-      // 页脚
+      // 阅读时长（中文 ~400 字/分，英文 ~200 词/分，忽略代码块）
+      hook.beforeEach(function(text, next){
+        var body = text.replace(/```[\s\S]*?```/g, ' ');
+        var cjk = (body.match(/[一-龥]/g) || []).length;
+        var words = (body.match(/[a-zA-Z]+/g) || []).length;
+        readingMinutes = Math.max(1, Math.round(cjk / 400 + words / 200));
+        next(text);
+      });
+
+      // 页脚：阅读时长 + 编辑此页
       hook.afterEach(function(html, next){
-        var footer = '<footer class="site-footer">© ' + new Date().getFullYear() +
-          ' 我的空间 · 由 <a href="https://docsify.js.org" target="_blank" rel="noopener">Docsify</a> 驱动' +
-          ' · <a href="https://github.com/QingFeng616/QingFeng616.github.io" target="_blank" rel="noopener">GitHub</a></footer>';
+        var file = (vm.route && vm.route.file) || '';
+        var editUrl = 'https://github.com/QingFeng616/QingFeng616.github.io/edit/main/docs/' + file;
+        var footer = '<footer class="site-footer">'
+          + '<div class="footer-meta">📖 约 ' + readingMinutes + ' 分钟阅读 · ✏️ <a href="' + editUrl + '" target="_blank" rel="noopener">编辑此页</a></div>'
+          + '<div class="footer-copy">© ' + new Date().getFullYear() + ' 我的空间 · 由 <a href="https://docsify.js.org" target="_blank" rel="noopener">Docsify</a> 驱动'
+          + ' · <a href="https://github.com/QingFeng616/QingFeng616.github.io" target="_blank" rel="noopener">GitHub</a></div>'
+          + '</footer>';
         next(html + footer);
       });
     }
@@ -523,10 +579,11 @@ window.$docsify={
 
 <!-- docsify 核心 + 插件 -->
 <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/docsify@4/plugins/search.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
 <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@2/dist/docsify-copy-code.min.js"></script>
-<script src="https://unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/zoom-image.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
 <!-- 代码高亮 -->
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
