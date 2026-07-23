@@ -1,16 +1,10 @@
-# Directories
-.husky/_
-.idea
-.vercel
-_playwright-report
-_playwright-results
-dist
-lib
-node_modules
-
-# Files
+# OS files
 .DS_Store
-*.log
+Thumbs.db
 
-# Exceptions
-!.gitkeep
+# Editor
+.idea
+.vscode
+
+# Logs
+*.log
