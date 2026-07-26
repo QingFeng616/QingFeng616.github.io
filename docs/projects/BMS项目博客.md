@@ -1,15 +1,4 @@
----
-title: 从零构建一套 STM32 + FreeRTOS 的锂电池 BMS（含上位机与 EKF 算法）
-date: 2026-07-26
-tags:
-  - STM32
-  - FreeRTOS
-  - BMS
-  - 嵌入式
-  - 卡尔曼滤波
-  - 电池管理
-categories: 嵌入式开发
----
+# 从零构建一套 STM32 + FreeRTOS 的锂电池 BMS（含上位机与 EKF 算法）
 
 > 项目开源地址：**[github.com/QingFeng616/Battery-Management-System](https://github.com/QingFeng616/Battery-Management-System)**
 
@@ -19,15 +8,14 @@ categories: 嵌入式开发
 
 这个项目是我为了系统练习**嵌入式软件分层架构 + 电池估计算法**而做的完整 5 串锂电池 BMS，硬件基于 **STM32F103C8T6 + FreeRTOS**，前端用 TI 的 **BQ76920**，通信走 **ESP8266 WiFi**，配套一个 **.NET 8 WinForms 上位机**做实时监控。
 
-整套系统的工作流如下图所示：
+整套系统的工作流如下：
 
 ```mermaid
 flowchart LR
-    BQ[BQ76920 AFE<br/>电压/电流/温度] -- I2C --> MCU[STM32F103C8T6<br/>FreeRTOS]
-    MCU -- GPIO 控制 --> FET[充/放电 MOS]
-    MCU -- UART --> ESP[ESP8266 WiFi]
-    ESP -- TCP/IP JSON --> PC[PC 上位机<br/>.NET 8 WinForms]
-    PC -. 配置/指令 .-> ESP
+    A[BQ76920 AFE<br/>电压/电流/温度] <-->|I2C| B[STM32F103C8T6<br/>FreeRTOS]
+    B -->|GPIO| C[充 / 放电 MOS 管]
+    B -->|UART| D[ESP8266 WiFi]
+    D -->|TCP / IP（JSON）| E[PC 上位机 .NET 8]
 ```
 
 ---
@@ -49,7 +37,7 @@ flowchart LR
 
 固件代码按职责清晰分层，这也是这个项目最想展示的工程能力：
 
-```
+```text
 app/          应用层：FreeRTOS 任务编排（采集 / 均衡 / SOC / 保护 / 通信）
 services/     业务服务层：与硬件解耦、可单测（balance / soc / protection / comm / charge_state）
 algorithms/   算法层：库仑积分(bq_soc) + EKF(bq_soc_ekf) + 滤波
@@ -95,15 +83,17 @@ SOC（剩余电量百分比）是 BMS 最难也最有趣的部分。本项目用
 
 模型参数集中定义便于调参：`R0=0.030Ω, R1=0.050Ω, C1=1200F (τ≈60s)`。
 
+算法数据流如下：
+
 ```mermaid
-flowchart TB
-    I[电流 I] --> CC[库仑积分<br/>SOC 预测]
-    I --> VC[极化电压 Vc<br/>Thevenin 过程]
-    VC --> OBS[端电压观测<br/>V = OCV + I·R0 + Vc]
-    OBS --> EKF[EKF 融合]
-    CC --> EKF
+flowchart TD
+    I[电流 I] --> CI[库仑积分<br/>SOC 预测]
+    I --> Vc[极化电压 Vc<br/>Thevenin τ=R1·C1]
+    Vc --> Voc[端电压观测<br/>V = OCV(SOC) + I·R0 + Vc]
+    OCV[OCV-SOC 查表] --> Voc
+    Voc --> EKF[EKF 融合]
+    CI --> EKF
     EKF --> SOC[SOC 输出 %]
-    OCVLUT[OCV-SOC 查表] --> EKF
 ```
 
 > 电流符号约定：`I>0 充电 → SOC 升`，`I<0 放电 → SOC 降`。这一约定已用单元测试守护（曾经修过符号反了的 bug）。
@@ -127,7 +117,7 @@ flowchart TB
 
 固件通过 ESP8266 向上位机周期上报一帧紧凑 JSON 风格数据（字段已对齐真实代码）：
 
-```
+```text
 {BMS,"V":19250,"I":1.520,"T":320,"SOC":80.00,
  "C":[3850,3830,3820,3840,3810],"B":0,"H":0,
  "F":00,"DHG":0,"CHG":0,"CharS":0}
@@ -172,6 +162,7 @@ git clone https://github.com/QingFeng616/Battery-Management-System.git
 - **固件**：用 Keil uVision 打开 `BMS.uvprojx`，选器件 STM32F103C8T6，编译下载。
 - **上位机**：用 Visual Studio / `dotnet` 打开 `上位机/BMS.csproj` 运行（需 .NET 8）。
 - **自动化测试（无需硬件）**：
+
   ```bash
   # C 单元测试（gcc 直接编译算法与 service 层）
   gcc -std=c99 -I.. -I../algorithms -I../services -I../drivers -I../app \
