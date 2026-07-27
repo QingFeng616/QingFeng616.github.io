@@ -15,7 +15,7 @@
 ## 技术栈
 
 | 类别 | 选型 |
-| --- | --- |
+|------|------|
 | MCU | STM32F429ZIT6（Cortex-M4，180 MHz，带 FMC/SDRAM、LTDC、DMA2D） |
 | 开发框架 | STM32CubeMX + Keil MDK |
 | RTOS | FreeRTOS（CMSIS_V2 封装） |
