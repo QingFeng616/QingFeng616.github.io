@@ -232,10 +232,12 @@ html.dark .markdown-section pre>code{color:#c9d4dd}
 }
 .markdown-section th,.markdown-section td{border:1px solid var(--border);padding:10px 14px}
 .markdown-section th{
-  background:var(--accent);
-  color:#fff;
+  background:var(--accent)!important;
+  color:#fff!important;
   font-weight:600;
-  border-color:var(--accent);
+}
+.markdown-section thead{
+  background:var(--accent);
 }
 .markdown-section tr:nth-child(2n){background:var(--bg-soft)}
 .markdown-section tbody tr:hover{background:var(--accent-soft-2)}
