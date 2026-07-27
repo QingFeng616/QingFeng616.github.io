@@ -12,7 +12,7 @@
 
 ```mermaid
 flowchart LR
-    A["BQ76920 AFE"] <-->|I2C| B["STM32F103C8T6"]
+    A["BQ76920 AFE"] ---|I2C| B["STM32F103C8T6"]
     B -->|GPIO| C["MOS管"]
     B -->|UART| D["ESP8266"]
     D -->|TCP/IP| E["PC上位机"]
