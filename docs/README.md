@@ -47,15 +47,25 @@
     <div class="card-title">BQ769520 通信协议</div>
     <div class="card-desc">关于该芯片的研究与应用</div>
   </a>
+  <a class="card" href="#/blogs/stm32f429-lvgl-bringup">
+    <div class="card-icon">🎨</div>
+    <div class="card-title">点亮 LVGL 的三关实战</div>
+    <div class="card-desc">STM32F429 上从黑屏到显示的 Bring-up 实战</div>
+  </a>
 </div>
 
 ## 🛠️ 项目相关
 
 <div class="card-grid">
-  <a class="card" href="#/projects/bms">
+  <a class="card" href="#/projects/BMS项目博客">
     <div class="card-icon">🔧</div>
     <div class="card-title">BMS 电池管理系统</div>
     <div class="card-desc">电池管理系统的设计与实现</div>
+  </a>
+  <a class="card" href="#/projects/stm32-sound-event-project">
+    <div class="card-icon">🎤</div>
+    <div class="card-title">实时声音事件识别系统</div>
+    <div class="card-desc">基于 STM32F429 + FreeRTOS + LVGL 的端侧识别原型</div>
   </a>
 </div>
 
@@ -66,6 +76,11 @@
     <div class="card-icon">📔</div>
     <div class="card-title">开发日记</div>
     <div class="card-desc">个人开发经历与思考</div>
+  </a>
+  <a class="card" href="#/Development_Diary/sound-event-dev-diary">
+    <div class="card-icon">🎙️</div>
+    <div class="card-title">声音事件识别系统·开发日记</div>
+    <div class="card-desc">从零搭建到 LCD 出图的完整过程</div>
   </a>
 </div>
 
