@@ -11,11 +11,11 @@
 整套系统的工作流如下：
 
 ```mermaid
-graph LR
+flowchart LR
     A[BQ76920 AFE<br/>电压/电流/温度] <-->|I2C| B[STM32F103C8T6<br/>FreeRTOS]
     B -->|GPIO| C[充 / 放电 MOS 管]
     B -->|UART| D[ESP8266 WiFi]
-    D -->|TCP / IP（JSON）| E[PC 上位机 .NET 8]
+    D -->|TCP / IP<br/>JSON| E[PC 上位机<br/>.NET 8]
 ```
 
 ---
@@ -86,10 +86,10 @@ SOC（剩余电量百分比）是 BMS 最难也最有趣的部分。本项目用
 算法数据流如下：
 
 ```mermaid
-graph TD
+flowchart TD
     I[电流 I] --> CI[库仑积分<br/>SOC 预测]
-    I --> Vc[极化电压 Vc<br/>Thevenin τ=R1·C1]
-    Vc --> Voc[端电压观测<br/>V = OCV(SOC) + I·R0 + Vc]
+    I --> Vc[极化电压 Vc<br/>Thevenin τ = R1·C1]
+    Vc --> Voc[端电压观测<br/>V = OCV + I·R0 + Vc]
     OCV[OCV-SOC 查表] --> Voc
     Voc --> EKF[EKF 融合]
     CI --> EKF

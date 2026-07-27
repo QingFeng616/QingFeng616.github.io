@@ -662,7 +662,7 @@ window.$docsify={
     function(hook, vm) {
       hook.afterEach(function(html, next) {
         html = html.replace(
-          /<pre[^>]*><code[^>]*class="[^"]*language-mermaid[^"]*"[^>]*>([\s\S]*?)<\/code><\/pre>/g,
+          /<pre[^>]*><code[^>]*class="[^"]*lang(?:uage)?-mermaid[^"]*"[^>]*>([\s\S]*?)<\/code><\/pre>/g,
           function(match, code) {
             var decoded = code
               .replace(/&lt;/g, '<')
