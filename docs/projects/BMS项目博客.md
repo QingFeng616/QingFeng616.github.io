@@ -12,10 +12,10 @@
 
 ```mermaid
 flowchart LR
-    A["BQ76920 AFE<br/>电压/电流/温度"] <-->|I2C| B["STM32F103C8T6<br/>FreeRTOS"]
-    B -->|GPIO| C["充放电 MOS 管"]
-    B -->|UART| D["ESP8266 WiFi"]
-    D -->|TCP/IP| E["PC 上位机 .NET 8"]
+    A["BQ76920 AFE"]<-->|I2C|B["STM32F103C8T6"]
+    B-->|GPIO|C["MOS管"]
+    B-->|UART|D["ESP8266"]
+    D-->|TCP/IP|E["PC上位机"]
 ```
 
 ---
@@ -87,13 +87,13 @@ SOC（剩余电量百分比）是 BMS 最难也最有趣的部分。本项目用
 
 ```mermaid
 flowchart TD
-    I["电流 I"] --> CI["库仑积分<br/>SOC 预测"]
-    I --> Vc["极化电压 Vc<br/>Thevenin τ = R1·C1"]
-    Vc --> Voc["端电压观测<br/>V = OCV + I·R0 + Vc"]
-    OCV["OCV-SOC 查表"] --> Voc
-    Voc --> EKF["EKF 融合"]
-    CI --> EKF
-    EKF --> SOC["SOC 输出 %"]
+    I["电流 I"]-->CI["库仑积分"]
+    I-->Vc["极化电压 Vc"]
+    Vc-->Voc["端电压观测"]
+    OCV["OCV-SOC查表"]-->Voc
+    Voc-->EKF["EKF融合"]
+    CI-->EKF
+    EKF-->SOC["SOC输出%"]
 ```
 
 > 电流符号约定：`I>0 充电 → SOC 升`，`I<0 放电 → SOC 降`。这一约定已用单元测试守护（曾经修过符号反了的 bug）。
