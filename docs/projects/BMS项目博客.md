@@ -12,10 +12,10 @@
 
 ```mermaid
 flowchart LR
-    A[BQ76920 AFE<br/>电压/电流/温度] <-->|I2C| B[STM32F103C8T6<br/>FreeRTOS]
-    B -->|GPIO| C[充 / 放电 MOS 管]
-    B -->|UART| D[ESP8266 WiFi]
-    D -->|TCP / IP<br/>JSON| E[PC 上位机<br/>.NET 8]
+    A["BQ76920 AFE<br/>电压/电流/温度"] <-->|I2C| B["STM32F103C8T6<br/>FreeRTOS"]
+    B -->|GPIO| C["充放电 MOS 管"]
+    B -->|UART| D["ESP8266 WiFi"]
+    D -->|TCP/IP| E["PC 上位机 .NET 8"]
 ```
 
 ---
@@ -23,7 +23,7 @@ flowchart LR
 ## 二、硬件组成
 
 | 部件 | 型号 | 作用 |
-|------|------|------|
+| ---- | ---- | ---- |
 | 主控 MCU | STM32F103C8T6 | Cortex-M3 / 72MHz，跑 FreeRTOS，编排采集、保护、均衡、通信等任务 |
 | 模拟前端 AFE | TI BQ76920 | 3~5 串锂电监控：单体/总压、电流（库仑计）、温度，并集成充放电 FET 控制与硬件故障检测（过流 OCD / 短路 SCD / 过压 OV / 欠压 UV） |
 | WiFi 模块 | ESP8266 | Station 模式，连接路由器后通过 TCP 把数据推送到上位机 |
@@ -87,13 +87,13 @@ SOC（剩余电量百分比）是 BMS 最难也最有趣的部分。本项目用
 
 ```mermaid
 flowchart TD
-    I[电流 I] --> CI[库仑积分<br/>SOC 预测]
-    I --> Vc[极化电压 Vc<br/>Thevenin τ = R1·C1]
-    Vc --> Voc[端电压观测<br/>V = OCV + I·R0 + Vc]
-    OCV[OCV-SOC 查表] --> Voc
-    Voc --> EKF[EKF 融合]
+    I["电流 I"] --> CI["库仑积分<br/>SOC 预测"]
+    I --> Vc["极化电压 Vc<br/>Thevenin τ = R1·C1"]
+    Vc --> Voc["端电压观测<br/>V = OCV + I·R0 + Vc"]
+    OCV["OCV-SOC 查表"] --> Voc
+    Voc --> EKF["EKF 融合"]
     CI --> EKF
-    EKF --> SOC[SOC 输出 %]
+    EKF --> SOC["SOC 输出 %"]
 ```
 
 > 电流符号约定：`I>0 充电 → SOC 升`，`I<0 放电 → SOC 降`。这一约定已用单元测试守护（曾经修过符号反了的 bug）。
